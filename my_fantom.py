@@ -8,6 +8,8 @@ import time
 
 import protocol
 
+import phantom_engine as CE
+
 host = "localhost"
 port = 12000
 # HEADERSIZE = 10
@@ -52,9 +54,12 @@ class Player():
     #Choose the card to play
     def choose_character(self, data):
         for color in self.char_order:
+            i = 0
             for each in data:
                 if (each['color'] == color):
-                    return each
+                    self.actual_card_played = each
+                    return i
+                i = i + 1
 
     #Is the color alone in room ?
     def is_alone(self, color, card):
@@ -83,28 +88,71 @@ class Player():
     
     #qyestion type select char
     def select_character(self, data):
-        print("select character")
         color = self.choose_character(data)
-        self.actual_card_played = color
-        print(color)
         return color
     
     #question type select position
-    def select_position(self, game_state):
+    def select_position(self, game_state, data):
         suspect_number = self.suspect_number(game_state)
-        print('Nombre de suspect :', suspect_number, '\n')
+        #print('Nombre de suspect :', suspect_number)
         scream_number = self.scream_number(game_state)
-        print('Nombre de personne qui peuvent crier :', scream_number, '\n')
+        #print('Nombre de personne qui peuvent crier :', scream_number)
+        #
+        #print('Actual played color :')
+        #print(self.actual_card_played)
+        return self.play_color(suspect_number, scream_number, game_state, data)
+    
+    def play_color(self, suspect_number, scream_number, game_state, data):
+        color = self.actual_card_played['color']
+        #print(game_state)
+        if color == "grey":
+            position = CE.play_grey(suspect_number, scream_number, game_state, self.actual_card_played, data)
+            print('move to ', position)
+            return position
+        if color == "blue":
+            return CE.play_pink_brown(suspect_number, scream_number, game_state, self.actual_card_played, data)
+        if color == "white":
+            return CE.play_pink_brown(suspect_number, scream_number, game_state, self.actual_card_played, data)
+        if color == "purple":
+            return CE.play_purple(suspect_number, scream_number, game_state, self.actual_card_played, data)
+        if color == "black":
+            return CE.play_pink_brown(suspect_number, scream_number, game_state, self.actual_card_played, data)
+        if color == "red":
+            return CE.play_pink_brown(suspect_number, scream_number, game_state, self.actual_card_played, data)
+        if color == "pink" or color == "brown":
+            return CE.play_pink_brown(suspect_number, scream_number, game_state, self.actual_card_played, data)
 
     def answer(self, question):
         # work
-        print(question)
+        #print(question)
         data = question["data"]
         game_state = question["game state"]
+        
         if (question['question type'] == "select character"):
-            return self.select_character(data)
+            print('\n\n')
+            print('_____Select Color_____')
+            res = self.select_character(data)
+            print('----',self.actual_card_played['color'],'----')
+            return res
         if (question['question type'] == "select position"):
-            return self.select_position(game_state)
+            print('_____Select position_____')
+            return self.select_position(game_state, data)
+
+        #power
+        suspect_number = self.suspect_number(game_state)
+        #print('Nombre de suspect :', suspect_number)
+        scream_number = self.scream_number(game_state)
+        #print('Nombre de personne qui peuvent crier :', scream_number)
+        if question['question type'] == "grey character power":
+            print('_____',question['question type'], '_____')
+            print(data)
+            position = CE.play_grey_power(game_state, data, self.actual_card_played, suspect_number, scream_number)
+            print(position)
+            return position
+
+
+        print('_____',question['question type'], '_____')
+        print(data)
         return 0
 
     def handle_json(self, data):

@@ -57,6 +57,11 @@ class Player():
         fantom_logger.debug(f"data -------------- {data}")
         fantom_logger.debug(f"response index ---- {response_index}")
         fantom_logger.debug(f"response ---------- {data[response_index]}")
+        print("|\n|")
+        print(f"question type ----- {question['question type']}")
+        print(f"data -------------- {data}")
+        print(f"response index ---- {response_index}")
+        print(f"response ---------- {data[response_index]}")
         return response_index
 
     def handle_json(self, data):
