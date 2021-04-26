@@ -8,7 +8,12 @@ import time
 
 import protocol
 
-import phantom_engine as CE
+#REAME ! Pour chaque couleur, importer les fonctions comme cela
+# import FILENAME as RACOURCIE
+
+import color_pink_brown as PB
+import color_grey as G
+import color_purple as P
 
 host = "localhost"
 port = 12000
@@ -42,6 +47,7 @@ class Player():
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
+        #Ordre des couleur pour le fantome
         self.char_order = ['grey', 'blue', 'white', 'purple', 'black', 'red', 'pink', 'brown']
         self.actual_card_played = None
 
@@ -86,75 +92,76 @@ class Player():
                 suspects = suspects + 1
         return suspects
     
-    #qyestion type select char
+    #question type select char
     def select_character(self, data):
         color = self.choose_character(data)
         return color
     
-    #question type select position
-    def select_position(self, game_state, data):
+    #Ici on a une condition pour chaque couleur, ici on ne s'occupe des des déplacement.
+    def play_color(self, game_state, data):
         suspect_number = self.suspect_number(game_state)
         #print('Nombre de suspect :', suspect_number)
         scream_number = self.scream_number(game_state)
-        #print('Nombre de personne qui peuvent crier :', scream_number)
-        #
-        #print('Actual played color :')
-        #print(self.actual_card_played)
-        return self.play_color(suspect_number, scream_number, game_state, data)
-    
-    def play_color(self, suspect_number, scream_number, game_state, data):
+        #print('Nombre de personne qui peuvent crier :', scream_number')
         color = self.actual_card_played['color']
-        #print(game_state)
         if color == "grey":
-            position = CE.play_grey(suspect_number, scream_number, game_state, self.actual_card_played, data)
+            position = G.play_grey(suspect_number, scream_number, game_state, self.actual_card_played, data)
             print('move to ', position)
             return position
         if color == "blue":
-            return CE.play_pink_brown(suspect_number, scream_number, game_state, self.actual_card_played, data)
+            return 0
         if color == "white":
-            return CE.play_pink_brown(suspect_number, scream_number, game_state, self.actual_card_played, data)
+            return 0
         if color == "purple":
-            return CE.play_purple(suspect_number, scream_number, game_state, self.actual_card_played, data)
+            return P.play_purple(suspect_number, scream_number, game_state, self.actual_card_played, data)
         if color == "black":
-            return CE.play_pink_brown(suspect_number, scream_number, game_state, self.actual_card_played, data)
+            return 0
         if color == "red":
-            return CE.play_pink_brown(suspect_number, scream_number, game_state, self.actual_card_played, data)
+            return 0
         if color == "pink" or color == "brown":
-            return CE.play_pink_brown(suspect_number, scream_number, game_state, self.actual_card_played, data)
+            return PB.play_pink_brown(suspect_number, scream_number, game_state, self.actual_card_played, data)
+        return 0
 
+    #Ici on ajoute une condition pour chaque pouvoir, exemple : le serveur envoie "grey character power" -> on apelle G.play_grey_power()
+    def play_color_power(self, question, suspect_number, scream_number, game_state, data):
+        if question['question type'] == "grey character power":
+            print('_____',question['question type'], '_____')
+            print(data)
+            position = G.play_grey_power(game_state, data, self.actual_card_played, suspect_number, scream_number)
+            print(position)
+            return position
+
+    #C'est ici que l'ont va voir ce que le serveur demande au travers de ces question, et les reponse attendue dans data
     def answer(self, question):
         # work
-        #print(question)
+        #Data contient les reponse possible, exemple : [0,2,5,6]
         data = question["data"]
+        #Game_state contient l'etat du jeux/plateau. On trouve dedans la position de toutes les couleurs,
+        #si elle sont suspect ou pas et +. Hésitez pas a le print pour le comprendre
         game_state = question["game state"]
-        
+
+        #Si il faut choisir une couleur parmis les 4 carte a jouer
         if (question['question type'] == "select character"):
-            print('\n\n')
+            print('\n')
             print('_____Select Color_____')
             res = self.select_character(data)
             print('----',self.actual_card_played['color'],'----')
             return res
+        #Si il faut déplacer la couleur
         if (question['question type'] == "select position"):
             print('_____Select position_____')
-            return self.select_position(game_state, data)
+            res = self.play_color(game_state, data)
+            print('----On va dans la sale :', res,'----')
+            return res
 
-        #power
+        #On s'occupe maintenant des pouvoir, on re calcul le nombre de couleurs qui peuvent cries, et le nombre de suspect.
         suspect_number = self.suspect_number(game_state)
-        #print('Nombre de suspect :', suspect_number)
         scream_number = self.scream_number(game_state)
+        #print('Nombre de suspect :', suspect_number)
         #print('Nombre de personne qui peuvent crier :', scream_number)
-        if question['question type'] == "grey character power":
-            print('_____',question['question type'], '_____')
-            print(data)
-            position = CE.play_grey_power(game_state, data, self.actual_card_played, suspect_number, scream_number)
-            print(position)
-            return position
+        return self.play_color_power(question, suspect_number, scream_number, game_state, data)
 
-
-        print('_____',question['question type'], '_____')
-        print(data)
-        return 0
-
+    #On touche pas
     def handle_json(self, data):
         data = json.loads(data)
         response = self.answer(data)
@@ -162,6 +169,7 @@ class Player():
         bytes_data = json.dumps(response).encode("utf-8")
         protocol.send_json(self.socket, bytes_data)
 
+    #On touche pas
     def run(self):
 
         self.connect()
@@ -174,7 +182,7 @@ class Player():
                 print("no message, finished learning")
                 self.end = True
 
-
+#On touche pas
 p = Player()
-
+#On touche pas
 p.run()

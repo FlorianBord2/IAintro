@@ -309,7 +309,7 @@ class Player:
                             'Choosing random exit.'
                         )
                         logger.warning(warning_message)
-                        selected_exit = choice(passages_work)
+                        selected_exit = choice(tuple(passages_work))
 
                     else:
                         selected_exit = available_exits[selected_index]
