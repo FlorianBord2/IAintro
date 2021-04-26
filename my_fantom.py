@@ -8,6 +8,8 @@ import time
 
 import protocol
 
+import my_utils as mu
+
 #REAME ! Pour chaque couleur, importer les fonctions comme cela
 # import FILENAME as RACOURCIE
 
@@ -56,52 +58,12 @@ class Player():
 
     def reset(self):
         self.socket.close()
-
-    #Choose the card to play
-    def choose_character(self, data):
-        for color in self.char_order:
-            i = 0
-            for each in data:
-                if (each['color'] == color):
-                    self.actual_card_played = each
-                    return i
-                i = i + 1
-
-    #Is the color alone in room ?
-    def is_alone(self, color, card):
-        for each in card:
-            if each['position'] == color['position'] and each['color'] != color['color']:
-                return False
-        return True
-
-    #How many people are able to scream
-    def scream_number(self, data):
-        scream_number = 0
-        card = data['characters']
-        for color in card:
-            if self.is_alone(color, card) == True:
-                if color['suspect'] == True:
-                    scream_number = scream_number + 1
-        return scream_number
-
-    #How many suspect still in the game
-    def suspect_number(self, data):
-        suspects = 0
-        for each in data['characters']:
-            if each['suspect'] is True:
-                suspects = suspects + 1
-        return suspects
-    
-    #question type select char
-    def select_character(self, data):
-        color = self.choose_character(data)
-        return color
     
     #Ici on a une condition pour chaque couleur, ici on ne s'occupe des des déplacement.
     def play_color(self, game_state, data):
-        suspect_number = self.suspect_number(game_state)
+        suspect_number = mu.suspect_number(game_state)
         #print('Nombre de suspect :', suspect_number)
-        scream_number = self.scream_number(game_state)
+        scream_number = mu.scream_number(game_state)
         #print('Nombre de personne qui peuvent crier :', scream_number')
         color = self.actual_card_played['color']
         if color == "grey":
@@ -144,8 +106,8 @@ class Player():
         if (question['question type'] == "select character"):
             print('\n')
             print('_____Select Color_____')
-            res = self.select_character(data)
-            print('----',self.actual_card_played['color'],'----')
+            res, self.actual_card_played = mu.choose_character(data)
+            print('Color choose:',res, ' aka ', self.actual_card_played['color'])
             return res
         #Si il faut déplacer la couleur
         if (question['question type'] == "select position"):
@@ -155,8 +117,8 @@ class Player():
             return res
 
         #On s'occupe maintenant des pouvoir, on re calcul le nombre de couleurs qui peuvent cries, et le nombre de suspect.
-        suspect_number = self.suspect_number(game_state)
-        scream_number = self.scream_number(game_state)
+        suspect_number = mu.suspect_number(game_state)
+        scream_number = mu.scream_number(game_state)
         #print('Nombre de suspect :', suspect_number)
         #print('Nombre de personne qui peuvent crier :', scream_number)
         return self.play_color_power(question, suspect_number, scream_number, game_state, data)

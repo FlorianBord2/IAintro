@@ -5,6 +5,42 @@ pink_passages = [{1, 4}, {0, 2, 5, 7}, {1, 3, 6}, {2, 7}, {0, 5, 8, 9},
                  {4, 6, 1, 8}, {5, 7, 2, 9}, {3, 6, 9, 1}, {4, 9, 5},
                  {7, 8, 4, 6}]
 
+char_order = ['grey', 'blue', 'white', 'purple', 'black', 'red', 'pink', 'brown']
+
+#Choose the card to play
+def choose_character(data):
+    for color in char_order:
+        i = 0
+        for each in data:
+            if (each['color'] == color):
+                return i, each
+            i = i + 1
+
+#Is the color alone in room ?
+def is_alone(color, card):
+    for each in card:
+        if each['position'] == color['position'] and each['color'] != color['color']:
+            return False
+    return True
+
+#How many people are able to scream
+def scream_number(data):
+    scream_number = 0
+    card = data['characters']
+    for color in card:
+        if is_alone(color, card) == True:
+            if color['suspect'] == True:
+                scream_number = scream_number + 1
+    return scream_number
+
+#How many suspect still in the game
+def suspect_number(data):
+    suspects = 0
+    for each in data['characters']:
+        if each['suspect'] is True:
+            suspects = suspects + 1
+    return suspects
+
 #move to empty room
 def move_to_empty_room(game_state, data):
     #near_room = find_near_room(color)
