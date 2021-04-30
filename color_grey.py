@@ -7,22 +7,43 @@ def play_grey(suspect_number, scream_number, game_state, actual_card_played, dat
             #Join empty room
             print('__case__1')
             position = mu.move_to_empty_room(game_state, data)
+            if position == -1:
+                #move dans unesalle avec au moins 2 suspect
+                position = mu.join_nb_suspect(game_state, data, 2)
+                if position == -1:
+                    position = 0
             return position
         else:
             #join suspect color
             print('__case__2')
-            position = mu.join_suspect(actual_card_played, game_state, data)
+            position = mu.join_nb_suspect(game_state, data, 1)
+            if position == -1:
+                position = mu.join_clean(game_state, data)
+                if position == -1:
+                    position = join_suspect(game_state,data)
+                    if position == -1:
+                        position = 0
             return position
     else:
         if scream_number > (suspect_number/2):
             #Join clean room
             print('__case__3')
-            position = mu.join_clean(actual_card_played, game_state, data)
+            position = mu.join_clean(game_state, data)
+            if position == -1:
+                position = mu.move_to_empty_room(game_state, data)
+                if position == -1:
+                    position = 0
             return position
         else:
             #Join suspect color
             print('__case__4')
-            position = mu.join_suspect(actual_card_played, game_state, data)
+            position = mu.join_nb_suspect(game_state, data, 1)
+            if position == -1:
+                position = mu.join_clean(game_state, data)
+                if position == -1:
+                    position = join_suspect(game_state,data)
+                    if position == -1:
+                        position = 0
             return position
 
 def play_grey_power(game_state, data, color, suspect_number, scream_number):
@@ -32,6 +53,7 @@ def play_grey_power(game_state, data, color, suspect_number, scream_number):
             position = mu.find_most_suspect_room(data,game_state)
             return position
         else:
+            #Activer dans une salle avec personne ou des personnages non suspects
             position = mu.move_to_empty_room(game_state, data)
             return position
     else:

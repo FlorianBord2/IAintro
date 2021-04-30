@@ -20,7 +20,7 @@ class Player:
     def play(self, game):
         logger.info("--\n" + self.role + " plays\n--")
 
-        logger.debug(json.dumps(game.update_game_state(""), indent=4))
+        #logger.debug(json.dumps(game.update_game_state(""), indent=4))
         charact = self.select(
             game.active_cards, game.update_game_state(self.role))
 
@@ -152,6 +152,7 @@ class Player:
                                         "data": available_positions,
                                         "game state": game_state}
                             selected_index = ask_question_json(self, question)
+                            print('### player response ', selected_index, " ###")
 
                             # test
                             if selected_index not in range(len(available_positions)):
@@ -371,7 +372,7 @@ class Player:
                         "data": available_positions,
                         "game state": game_state}
             selected_index = ask_question_json(self, question)
-
+            print('### player response ', selected_index, " avaulable position was ", available_positions," ###")
             # test
             if selected_index not in range(len(available_positions)):
                 warning_message = (

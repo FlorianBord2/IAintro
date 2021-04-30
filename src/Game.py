@@ -168,7 +168,7 @@ class Game:
         # log
         logger.info("\n------------------")
         logger.info(self)
-        logger.debug(json.dumps(self.update_game_state(""), indent=4))
+        #logger.debug(json.dumps(self.update_game_state(""), indent=4))
 
         # work
         self.actions()
