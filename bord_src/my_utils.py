@@ -109,6 +109,15 @@ def join_clean(game_state, data):
     print('No clean found\n')
     return -1
 
+#join someone
+def join_someone(game_state, data):
+    for room in data:
+        for color in game_state['characters']:
+            if color['position'] == room :
+                return room
+    print('Nobody nearby\n')
+    return -1
+
 #Join clean alone
 def join_clean_alone(game_state, data):
     card = game_state['characters']
@@ -230,6 +239,20 @@ def less_suspect_around(game_state, data):
             most_suspect_around_saved = room
     print('DANS LESS SUSPECT ON TROUVE ROOM :',most_suspect_around_saved)
     return most_suspect_around_saved
+
+#Se déplacer dans une salle avec le nombre de suspect dans la salle ~= (crie – (suspect/2) – 1) 
+def join_special_suspect(game_state, data, scream_number, suspect_number, value):
+    goal = (suspect_number/2) - scream_number + value
+    nb_suspect
+    for room in data:
+        #cb de suspect 
+        for color in game_state['characters']:
+                if color['position'] == room and color['suspect'] == True:
+                    nb_suspect = nb_suspect + 1
+        if nb_suspect == goal:
+            return room
+    return -1
+
 
 
 

@@ -12,6 +12,9 @@ sys.path.insert(0, '/bord_src')
 from bord_src import my_utils as mu
 
 from bord_src.inspector import color_red as R
+from bord_src.inspector import color_black as B
+from bord_src.inspector import color_pink_brown as PB
+from bord_src.inspector import color_white as W
 
 host = "localhost"
 port = 12000
@@ -76,16 +79,19 @@ class Player():
         if color == "blue":
             return 0
         if color == "white":
-            return 0
+            position = W.play_white(suspect_number, scream_number, game_state, self.actual_card_played, data)
+            return self.get_index(position, data)
         if color == "purple":
             return 0
         if color == "black":
-            return 0
+            position = B.play_black(suspect_number, scream_number, game_state, self.actual_card_played, data)
+            return self.get_index(position, data)
         if color == "red":
             position = R.play_red(suspect_number, scream_number, game_state, self.actual_card_played, data)
             return self.get_index(position, data)
         if color == "pink" or color == "brown":
-            return 0
+            position = PB.play_pink_brown(suspect_number, scream_number, game_state, self.actual_card_played, data)
+            return self.get_index(position, data)
         return 0
 
     #Ici on ajoute une condition pour chaque pouvoir, exemple : le serveur envoie "grey character power" -> on apelle G.play_grey_power()
@@ -96,6 +102,9 @@ class Player():
             return 0
         if question['question type'] == "active black power":
             position = B.play_black_power(game_state, data, self.actual_card_played,suspect_number, scream_number)
+            return self.get_index(position,data)
+        if question['question type'] == "active white power":
+            position = W.play_white_power(game_state, data, self.actual_card_played,suspect_number, scream_number)
             return self.get_index(position,data)
 
     #C'est ici que l'ont va voir ce que le serveur demande au travers de ces question, et les reponse attendue dans data
