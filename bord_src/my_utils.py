@@ -253,9 +253,37 @@ def join_special_suspect(game_state, data, scream_number, suspect_number, value)
             return room
     return -1
 
+#trouver une couleur non seul:
+def find_color_not_alone(game_state, data, color):
+    card = game_state['characters']
+    for each in card:
+        if each['position'] == color['position'] and each['color'] != color['color']:
+                return each['color']
+    return -1
 
 
+def find_color_alone(game_state, data, color):
+    card = game_state['characters']
+    for each in card:
+        if is_alone(each, card):
+            return each['color']
+    return -1
 
+def find_scream(game_state, data, color):
+    card = game_state['characters']
+    for each in card:
+        if is_alone(each, card) == True:
+            if each['suspect'] == True and each['color'] != color['color']:
+                return each['color']
+    return -1
+
+def find_cant_scream(game_state, data,color):
+    card = game_state['characters']
+    for each in card:
+        if is_alone(each, card) == False:
+            if each['suspect'] == True and each['color'] != color['color']:
+                return each['color']
+    return -1
 
 def find_near_room(color):
     position = color['position']

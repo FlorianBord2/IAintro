@@ -9,7 +9,7 @@ def play_white(suspect_number, scream_number, game_state, actual_card_played, da
             return position
         else:
             print('__case__2')
-            position = mu.join_special_suspect(game_state, data)
+            position = mu.join_special_suspect(game_state, data, scream_number, suspect_number, -1)
             if position == -1:
                 position = 0
             return position
@@ -20,7 +20,7 @@ def play_white(suspect_number, scream_number, game_state, actual_card_played, da
             return position
         else:
             print('__case__4')
-            position = mu.join_special_suspect(game_state, data)
+            position = mu.join_special_suspect(game_state, data,scream_number, suspect_number, 0)
             if position == -1:
                 position = 0
             return position
@@ -39,4 +39,5 @@ def play_white_power(game_state, data):
             return 0
         else:
             print('__case__4')
-           return 1
+            return 1
+    return 0

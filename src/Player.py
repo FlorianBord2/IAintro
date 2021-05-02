@@ -196,7 +196,7 @@ class Player:
                             'Choosing random character.'
                         )
                         logger.warning(warning_message)
-                        selected_character = choice(colors)
+                        selected_character = choice(tuple(colors))
 
                     else:
                         selected_character = available_characters[selected_index]

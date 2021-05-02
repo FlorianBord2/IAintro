@@ -15,6 +15,8 @@ from bord_src.inspector import color_red as R
 from bord_src.inspector import color_black as B
 from bord_src.inspector import color_pink_brown as PB
 from bord_src.inspector import color_white as W
+from bord_src.inspector import color_grey as G
+from bord_src.inspector import color_purple as P
 
 host = "localhost"
 port = 12000
@@ -48,7 +50,7 @@ class Player():
         # self.old_question = ""
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.char_order = ['red', 'grey', 'black', 'white', 'purple', 'blue', 'pink', 'brown']
+        self.char_order = ['purple','red', 'grey', 'black', 'white', 'purple', 'blue', 'pink', 'brown']
         self.actual_card_played = None
 
     def connect(self):
@@ -75,14 +77,16 @@ class Player():
         color = self.actual_card_played['color']
         print('data =', data)
         if color == "grey":
-            return 0
+            position = G.play_grey(suspect_number, scream_number, game_state, self.actual_card_played, data)
+            return self.get_index(position, data)
         if color == "blue":
             return 0
         if color == "white":
             position = W.play_white(suspect_number, scream_number, game_state, self.actual_card_played, data)
             return self.get_index(position, data)
         if color == "purple":
-            return 0
+            position = P.play_purple(suspect_number, scream_number, game_state, self.actual_card_played, data)
+            return self.get_index(position, data)
         if color == "black":
             position = B.play_black(suspect_number, scream_number, game_state, self.actual_card_played, data)
             return self.get_index(position, data)
@@ -99,15 +103,22 @@ class Player():
         print(question['question type'], " ------------------------------------")
         print('Data=',data)
         if question['question type'] == "grey character power":
-            return 0
+            position = G.play_grey_power(game_state, data, self.actual_card_played,suspect_number, scream_number)
+            return self.get_index(position,data)
         if question['question type'] == "active black power":
             position = B.play_black_power(game_state, data, self.actual_card_played,suspect_number, scream_number)
             return self.get_index(position,data)
         if question['question type'] == "active white power":
             position = W.play_white_power(game_state, data, self.actual_card_played,suspect_number, scream_number)
             return self.get_index(position,data)
+        if question['question type'] == "activate purple power":
+            position = P.play_purple_power(game_state, data, self.actual_card_played,suspect_number, scream_number)
+            return self.get_index(position,data)
+        if question['question type'] == "purple character power":
+            position = P.play_purple_character(game_state, data, self.actual_card_played,suspect_number, scream_number)
+            return self.get_index(position,data)
+        return 0    
 
-    #C'est ici que l'ont va voir ce que le serveur demande au travers de ces question, et les reponse attendue dans data
     def answer(self, question):
         # work
         #Data contient les reponse possible, exemple : [0,2,5,6]
