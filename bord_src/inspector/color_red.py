@@ -35,6 +35,3 @@ def play_red(suspect_number, scream_number, game_state, actual_card_played, data
             if position == -1:
                 position = 0
             return position
-
-def play_red_power(game_state, data, color, suspect_number, scream_number):
-    return 0

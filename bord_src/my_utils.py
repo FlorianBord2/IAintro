@@ -243,9 +243,9 @@ def less_suspect_around(game_state, data):
 #Se déplacer dans une salle avec le nombre de suspect dans la salle ~= (crie – (suspect/2) – 1) 
 def join_special_suspect(game_state, data, scream_number, suspect_number, value):
     goal = (suspect_number/2) - scream_number + value
-    nb_suspect
     for room in data:
         #cb de suspect 
+        nb_suspect = 0
         for color in game_state['characters']:
                 if color['position'] == room and color['suspect'] == True:
                     nb_suspect = nb_suspect + 1
