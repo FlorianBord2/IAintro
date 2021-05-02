@@ -20,7 +20,7 @@ def play_grey(suspect_number, scream_number, game_state, actual_card_played, dat
             if position == -1:
                 position = mu.join_clean(game_state, data)
                 if position == -1:
-                    position = join_suspect(game_state,data)
+                    position = mu.join_suspect(game_state,data)
                     if position == -1:
                         position = 0
             return position
@@ -41,7 +41,7 @@ def play_grey(suspect_number, scream_number, game_state, actual_card_played, dat
             if position == -1:
                 position = mu.join_clean(game_state, data)
                 if position == -1:
-                    position = join_suspect(game_state,data)
+                    position = mu.join_suspect(game_state,data)
                     if position == -1:
                         position = 0
             return position

@@ -18,6 +18,8 @@ import color_grey as G
 import color_purple as P
 import color_black as B
 import color_red as R
+import color_white as W
+import color_blue as BU
 
 host = "localhost"
 port = 12000
@@ -82,9 +84,11 @@ class Player():
             position = G.play_grey(suspect_number, scream_number, game_state, self.actual_card_played, data)
             return self.get_index(position, data)
         if color == "blue":
-            return 0
+            position = BU.play_blue(suspect_number, scream_number, game_state, self.actual_card_played, data)
+            return self.get_index(position, data)
         if color == "white":
-            return 0
+            position = W.play_white(suspect_number, scream_number, game_state, self.actual_card_played, data)
+            return self.get_index(position, data)
         if color == "purple":
             position = P.play_purple(suspect_number, scream_number, game_state, self.actual_card_played, data)
             return self.get_index(position, data)
@@ -110,6 +114,9 @@ class Player():
             return self.get_index(position, data)
         if question['question type'] == "active black power":
             position = B.play_black_power(game_state, data, self.actual_card_played, suspect_number, scream_number)
+            return position
+        if question['question type'] == "active white power":
+            position = W.play_white_power(game_state, data, self.actual_card_played, suspect_number,scream_number)
             return position
 
     #C'est ici que l'ont va voir ce que le serveur demande au travers de ces question, et les reponse attendue dans data
