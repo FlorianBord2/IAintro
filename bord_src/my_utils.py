@@ -17,10 +17,9 @@ pink_passages = [{1, 4}, {0, 2, 5, 7}, {1, 3, 6}, {2, 7}, {0, 5, 8, 9},
                  {4, 6, 1, 8}, {5, 7, 2, 9}, {3, 6, 9, 1}, {4, 9, 5},
                  {7, 8, 4, 6}]
 
-char_order = ['grey', 'blue', 'white', 'purple', 'black', 'red', 'pink', 'brown']
-
 #Choose the card to play
-def choose_character(data):
+def choose_character(data, char_order):
+    print('Choose character posibility :', data)
     for color in char_order:
         i = 0
         for each in data:

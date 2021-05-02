@@ -1,4 +1,4 @@
-import my_utils as mu
+from bord_src import my_utils as mu
 
 def play_purple(suspect_number, scream_number, game_state, actual_card_played, data):
     position = 0
