@@ -17,6 +17,7 @@ import color_pink_brown as PB
 import color_grey as G
 import color_purple as P
 import color_black as B
+import color_red as R
 
 host = "localhost"
 port = 12000
@@ -91,7 +92,8 @@ class Player():
             position = B.play_black(suspect_number, scream_number, game_state, self.actual_card_played, data)
             return self.get_index(position, data)
         if color == "red":
-            return 0
+            position = R.play_red(suspect_number, scream_number, game_state, self.actual_card_played, data)
+            return self.get_index(position, data)
         if color == "pink" or color == "brown":
             position = PB.play_pink_brown(suspect_number, scream_number, game_state, self.actual_card_played, data)
             return self.get_index(position, data)
@@ -118,7 +120,6 @@ class Player():
         #Game_state contient l'etat du jeux/plateau. On trouve dedans la position de toutes les couleurs,
         #si elle sont suspect ou pas et +. Hésitez pas a le print pour le comprendre
         game_state = question["game state"]
-
         #Si il faut choisir une couleur parmis les 4 carte a jouer
         if (question['question type'] == "select character"):
             print('\n')

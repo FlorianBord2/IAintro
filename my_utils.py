@@ -93,6 +93,14 @@ def join_suspect_scream(game_state, data):
     print('No alone suspect found\n')
     return -1
 
+#Join suspect qui ne crei pas
+def join_suspect_not_scream(game_state, data):
+    for room in data:
+        if not suspect_inside_alone(room, game_state):
+            return room
+    print('No screamer suspect found\n')
+    return -1
+
 #Join clean
 def join_clean(game_state, data):
     for room in data:
