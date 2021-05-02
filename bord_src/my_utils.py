@@ -18,11 +18,13 @@ pink_passages = [{1, 4}, {0, 2, 5, 7}, {1, 3, 6}, {2, 7}, {0, 5, 8, 9},
                  {7, 8, 4, 6}]
 
 #Choose the card to play
-def choose_character(data, char_order):
+def choose_character(data, char_order, fantom):
     print('Choose character posibility :', data)
     for color in char_order:
         i = 0
         for each in data:
+            if each['color'] == fantom:
+                return i, each
             if (each['color'] == color):
                 return i, each
             i = i + 1
@@ -34,14 +36,26 @@ def is_alone(color, card):
             return False
     return True
 
+def is_alone_or_dark(color, card, game_state):
+    dark = game_state['shadow']
+    for each in card:
+        if each['position'] == color['position'] and each['color'] != color['color']:
+            if color['position'] == dark:
+                return True
+            else:
+                return False
+    return True
+
 #How many people are able to scream
 def scream_number(data):
     scream_number = 0
+    dark = data['shadow']
     card = data['characters']
     for color in card:
-        if is_alone(color, card) == True:
-            if color['suspect'] == True:
-                scream_number = scream_number + 1
+        if is_alone(color, card) == True and color['suspect'] == True:
+            scream_number = scream_number + 1
+        elif color['suspect'] == True and color['position'] == dark:
+            scream_number = scream_number + 1
     return scream_number
 
 #How many suspect still in the game
@@ -68,10 +82,10 @@ def join_nb_suspect(game_state, data, nb):
         for color in game_state['characters']:
             if color['position'] == room and color['suspect'] == True:
                 sus_in_room = sus_in_room + 1
-            if sus_in_room == nb:
-                print('We found ',sus_in_room, ' in room ', room)
-                return room
-    print('No ',nb,' suspect found\n')
+        if sus_in_room >= nb:
+            print('We found ',sus_in_room, ' in room ', room)
+            return room
+    print('we didint found a room with ',nb,' suspect inside\n')
     return -1
 
 
@@ -152,7 +166,7 @@ def clean_inside(room, game_state):
 def suspect_inside_alone(room, game_state):
     card = game_state['characters']
     for color in game_state['characters']:
-        if color['position'] == room and color['suspect'] == True and is_alone(color, card):
+        if color['position'] == room and color['suspect'] == True and is_alone_or_dark(color, card, game_state):
             return True
     return False
 
@@ -294,3 +308,61 @@ def find_near_room(color):
                 if room != position and room not in posibility:
                     posibility.append(room)
     return posibility
+
+
+def print_map( map):
+    i = 0
+    for each in map['characters']:
+        print(i,each['color'], each['position'], "suspect:", each['suspect'])
+        i = i + 1
+
+# data = {'question type': 'select character',
+# 'data': [
+#     {'color': 'brown', 'suspect': False, 'position': 8, 'power': False},
+#     {'color': 'blue', 'suspect': True, 'position': 8, 'power': False},
+#     {'color': 'white', 'suspect': True, 'position': 1, 'power': False}],
+#     'game state':
+#     {'position_carlotta': 6, 'exit': 22, 'num_tour': 1, 'shadow': 1,
+#      'blocked': [4, 8], 
+#      'characters': [{'color': 'pink', 'suspect': True, 'position': 3, 'power': False},
+#      {'color': 'white', 'suspect': True, 'position': 1, 'power': False},
+#      {'color': 'purple', 'suspect': True, 'position': 2, 'power': False},
+#      {'color': 'blue', 'suspect': True, 'position': 8, 'power': False},
+#      {'color': 'brown', 'suspect': True, 'position': 8, 'power': False},
+#      {'color': 'grey', 'suspect': True, 'position': 1, 'power': False},
+#      {'color': 'red', 'suspect': True, 'position': 0, 'power': False},
+#      {'color': 'black', 'suspect': True, 'position': 0, 'power': False}],
+#      'character_cards': [{'color': 'black', 'suspect': True, 'position': 0, 'power': False},
+#      {'color': 'brown', 'suspect': True, 'position': 8, 'power': False},
+#      {'color': 'blue', 'suspect': True, 'position': 8, 'power': False},
+#      {'color': 'white', 'suspect': True, 'position': 1, 'power': False},
+#      {'color': 'red', 'suspect': True, 'position': 0, 'power': False},
+#      {'color': 'purple', 'suspect': True, 'position': 2, 'power': False},
+#      {'color': 'pink', 'suspect': True, 'position': 3, 'power': False},
+#      {'color': 'grey', 'suspect': True, 'position': 1, 'power': False}],
+#      'active character_cards': [
+#          {'color': 'brown', 'suspect': True, 'position': 8, 'power': False},
+#          {'color': 'blue', 'suspect': True, 'position': 8, 'power': False},
+#          {'color': 'white', 'suspect': True, 'position': 1, 'power': False}], 
+#      'fantom': 'white'}}
+# print('Dark room;', data['game state']['shadow'])
+# game_state = data["game state"]
+# data = data['data']
+
+# card = game_state['characters']
+
+# color = card[0]
+
+# print_map(game_state)
+# for each in card:
+#     print('alone ',is_alone(each, card))
+
+# data = [8,4]
+# print(data)
+#print('scream number :',scream_number(game_state))
+#print('suspect number  :',suspect_number(game_state))
+#print(move_to_empty_room(game_state, [1,4,6]))
+#print(join_nb_suspect(game_state, data, 1))
+#print(move_to_empty_room(game_state, data))
+#print(join_suspect(game_state, data))
+#print(join_suspect_scream(game_state,data))

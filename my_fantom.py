@@ -59,6 +59,8 @@ class Player():
         #Ordre des couleur pour le fantome
         self.char_order = ['grey', 'blue', 'white', 'purple', 'black', 'red', 'pink', 'brown']
         self.actual_card_played = None
+        self.fantom = None
+        self.isFantom = False
 
     def connect(self):
         self.socket.connect((host, port))
@@ -80,7 +82,7 @@ class Player():
         suspect_number = mu.suspect_number(game_state)
         #print('Nombre de suspect :', suspect_number)
         scream_number = mu.scream_number(game_state)
-        #print('Nombre de personne qui peuvent crier :', scream_number')
+        #print('Nombre de personne qui peuvent crier :', scream_number)
         color = self.actual_card_played['color']
         print('data =', data)
         if color == "grey":
@@ -125,21 +127,41 @@ class Player():
         if question['question type'] == "active blue power":
             position = BL.play_blue_power(game_state, data, self.actual_card_played, suspect_number,scream_number)
             return self.get_index(position, data)
+        if question['question type'] == "activate purple power":
+            position = P.play_purple_power(game_state, data, self.actual_card_played,suspect_number, scream_number)
+            return self.get_index(position,data)
+        if question['question type'] == "purple character power":
+            position = P.play_purple_character(game_state, data, self.actual_card_played,suspect_number, scream_number)
+            return self.get_index(position,data)
+
+    def print_map(self, map):
+        for each in map['characters']:
+            print(each['color'], each['position'])
 
     #C'est ici que l'ont va voir ce que le serveur demande au travers de ces question, et les reponse attendue dans data
     def answer(self, question):
         # work
+        
         #Data contient les reponse possible, exemple : [0,2,5,6]
         data = question["data"]
+        
         #Game_state contient l'etat du jeux/plateau. On trouve dedans la position de toutes les couleurs,
         #si elle sont suspect ou pas et +. Hésitez pas a le print pour le comprendre
         game_state = question["game state"]
+        self.fantom = game_state['fantom']
+        #print('HOUUUUUUUUUU', fantom)
+        suspect_number = mu.suspect_number(game_state)
+        #print('Nombre de suspect :', suspect_number)
+        scream_number = mu.scream_number(game_state)
+        #print('Nombre de personne qui peuvent crier :', scream_number)
+        #print('Shadow room:', game_state['shadow'])
+        #self.print_map(game_state)
         #Si il faut choisir une couleur parmis les 4 carte a jouer
         if (question['question type'] == "select character"):
-            print('\n')
             print('_____Select Color_____')
-            res, self.actual_card_played = mu.choose_character(data, self.char_order)
+            res, self.actual_card_played = mu.choose_character(data, self.char_order, self.fantom)
             print('Color choose:',res, ' aka ', self.actual_card_played['color'])
+            self.isFantom = False
             return res
         #Si il faut déplacer la couleur
         if (question['question type'] == "select position"):
