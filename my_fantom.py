@@ -122,6 +122,9 @@ class Player():
         if question['question type'] == "active white power":
             position = W.play_white_power(game_state, data, self.actual_card_played, suspect_number,scream_number)
             return self.get_index(position, data)
+        if question['question type'] == "active blue power":
+            position = BL.play_blue_power(game_state, data, self.actual_card_played, suspect_number,scream_number)
+            return self.get_index(position, data)
 
     #C'est ici que l'ont va voir ce que le serveur demande au travers de ces question, et les reponse attendue dans data
     def answer(self, question):
